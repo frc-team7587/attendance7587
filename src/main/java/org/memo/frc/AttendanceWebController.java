@@ -1,4 +1,4 @@
-package com.example.springbootdemo;
+package org.memo.frc;
 
 import java.beans.PropertyEditorSupport;
 import java.sql.Timestamp;
