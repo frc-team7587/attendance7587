@@ -8,31 +8,32 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link th:href="@{/myStyle.css}" rel="stylesheet">
 
-    <title>Attendance By Name</title>
+    <title>Weekly hours</title>
 
 </head>
 
 <body>
     <hr>
     <table class="table table-hover table-bordered">
+        <th>Individual hours this week: </th>
         <tr>
             <th>NAME</th>
-            <th>TIME IN</th>
-            <th>TIME OUT</th>
-            <th>EVENT</th>
             <th>TIME SPENT (hours)</th>
         </tr>
-        <tr th:each="u : ${attendanceByName}">
+        <tr th:each="u : ${weeklyHours}">
             <td th:text="${u.name}">name</td>
-            <td th:text="${u.timeIn}">timeIn</td>
-            <td th:text="${u.timeOut}">timeOut</td>
-            <td th:text="${u.event}">event</td>
             <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>
+        <tr>
+            <th>Total team hours:
+            <td th:text="${total}">
+                total hours
+            </td>
+            </th>
+        </tr>
     </table>
-    <a th:href="@{/}"><input type=button class="btn btn-primary" value="Back to currentlyCheckedIn"></a>
-    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
-    <a th:href="@{/allAttendance"><input type=button class="btn btn-primary" value="To allAttendance"></a>
+    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary" value="To allAttendance"></a>
+    <a th:href="@{/}"><input type=button class="btn btn-primary" value="To currentlyCheckedIn"></a>
 
 
 </body>

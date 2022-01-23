@@ -142,7 +142,7 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public List getAttendanceByName(String queryName) {
+	public List<AttendanceObject> getAttendanceByName(String queryName) {
 		try {
 			state = getConnection().createStatement();
 			rs = state.executeQuery("Select * from `attendance` where name = \"" + queryName + "\"");
@@ -168,21 +168,30 @@ public class AttendanceDataAccess {
 
 	}
 
-	public List getAllAttendance() {
+	public List<AttendanceObject> getAllAttendance() {
 		try {
 			state = getConnection().createStatement();
 			rs = state.executeQuery("Select * from `attendance`");
-			int id;
+			int id, timeSpent;
 			String name, event;
 			java.sql.Timestamp timeIn, timeOut;
 			ArrayList<AttendanceObject> attendancePOJOs = new ArrayList<>();
+			AttendanceObject pojo;
+			ResultSet rs2;
+			Statement state2 = getConnection().createStatement();
 			while (rs.next()) {
 				id = rs.getInt("id");
 				name = rs.getString("name");
 				timeIn = rs.getTimestamp("timeIn");
 				timeOut = rs.getTimestamp("timeOut");
 				event = rs.getString("event");
-				attendancePOJOs.add(new AttendanceObject(id, name, timeIn, timeOut, event));
+				pojo = new AttendanceObject(id, name, timeIn, timeOut, event);
+				rs2 = state2.executeQuery(
+						"select timestampdiff (minute, timeIn, timeOut) as totalTime from `attendance` where id = "
+								+ id);
+				timeSpent = rs2.next() ? rs2.getInt("totalTime") : -1;
+				pojo.setTimeSpent((timeSpent / 60) + (0.25 * ((timeSpent % 60) / 15)));
+				attendancePOJOs.add(pojo);
 			}
 			state.close();
 			return attendancePOJOs;
@@ -250,7 +259,7 @@ public class AttendanceDataAccess {
 
 	public boolean confirmCheck(AttendanceObject att) {
 		try {
-			state.getConnection().createStatement();
+			state = getConnection().createStatement();
 			if (att.getTimeOut() == null) {
 				String sql = "insert into `attendance` values (\"" + att.getName() + "\", \""
 						+ String.format("%1$TD %1$TT", att.getTimeIn()) + "\", \""
@@ -271,27 +280,54 @@ public class AttendanceDataAccess {
 
 	public List<AttendanceObject> currentlyCheckedIn() {
 		try {
-			state.getConnection().createStatement();
+			state = getConnection().createStatement();
 			ArrayList<AttendanceObject> currentlyCheckedIn = new ArrayList<>();
 			Date now = new java.util.Date();
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String date = format.format(now);
-			String sql = "select * from `attendance` where date(timestamp) = \'" + date + "\" and timeOut = null";
+			String sql = "select * from `attendance` where date(timeIn) = '" + date + "' and timeOut is null";
 			rs = state.executeQuery(sql);
-			int id;
-			String name, event;
-			Timestamp timeIn, timeOut;
+			String name;
 			while (rs.next()) {
-				id = rs.getInt("id");
 				name = rs.getString("name");
-				timeIn = rs.getTimestamp("timeIn");
-				timeOut = rs.getTimestamp("timeOut");
-				event = rs.getString("event");
-				currentlyCheckedIn.add(new AttendanceObject(id, name, timeIn, timeOut, event));
+				currentlyCheckedIn.add(new AttendanceObject(null, name, null, null, null));
 			}
 			state.close();
 			rs.close();
 			return currentlyCheckedIn;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public List<AttendanceObject> weeklyHours() {
+		try {
+			state = getConnection().createStatement();
+			Date now = new java.util.Date();
+			DateFormat format = new SimpleDateFormat("ww");
+			String weekStr = format.format(now);
+			int week = Integer.parseInt(weekStr);
+			System.out.println(week);
+			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) = "
+					+ (week - 1);
+			rs = state.executeQuery(sql);
+			String name;
+			double time;
+			int SQLtime;
+			ArrayList<AttendanceObject> weeklyHours = new ArrayList<>();
+			AttendanceObject pojo;
+			while (rs.next()) {
+				name = rs.getString("name");
+				SQLtime = rs.getInt("totalTime");
+				time = (SQLtime / 60) + (0.25 * (SQLtime % 60 / 15));
+				pojo = new AttendanceObject(null, name, null, null, null);
+				pojo.setTimeSpent(time);
+				weeklyHours.add(pojo);
+			}
+			state.close();
+			rs.close();
+			return weeklyHours;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;

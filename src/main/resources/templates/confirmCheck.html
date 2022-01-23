@@ -17,6 +17,7 @@
             <th>Id: </th>
             <td th:text="${scanResult.id}"></td>
         </tr>
+        <th>Check In/Out Confirmed</th>
         <tr>
             <th>Name: </th>
             <td th:text="${scanResult.name}"></td>
@@ -36,6 +37,6 @@
     </table>
 </body>
 
-<a th:href="@{/}"><input type=button class = "btn btn-primary" value="Back to allAttendance"></a>
+<a th:href="@{/}"><input type=button class = "btn btn-primary" value="Back to currentlyCheckedIn"></a>
 
 </html>

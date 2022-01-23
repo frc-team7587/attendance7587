@@ -20,15 +20,19 @@
             <th>TIME IN</th>
             <th>TIME OUT</th>
             <th>EVENT</th>
+            <th>TIME SPENT (hours)</th>
         </tr>
         <tr th:each="u : ${allAttendance}">
-            <td class="hiddenRow" th:text="${u.id}">id</td>
             <td th:text="${u.name}">name</td>
             <td th:text="${u.timeIn}">timeIn</td>
             <td th:text="${u.timeOut}">timeOut</td>
             <td th:text="${u.event}">event</td>
+            <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>
     </table>
+    <a th:href="@{/}"><input type=button class="btn btn-primary" value="To currentlyCheckedIn"></a>
+    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
+
 
 </body>
 

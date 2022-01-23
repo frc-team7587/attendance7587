@@ -15,6 +15,7 @@ public class AttendanceObject {
 	Timestamp timeIn;
 	Timestamp timeOut;
 	String event;
+	double timeSpent;
 
 	public AttendanceObject(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
 		super();
@@ -73,4 +74,11 @@ public class AttendanceObject {
 		this.event = event;
 	}
 
+	public void setTimeSpent(double timeSpent) {
+		this.timeSpent = timeSpent;
+	}
+
+	public double getTimeSpent() {
+		return timeSpent;
+	}
 }

@@ -32,6 +32,13 @@ public class AttendanceWebController {
 	private AttendanceService attendanceService;
 
 	@GetMapping({ "/" })
+	public String currentlyCheckedIn(Model model) {
+		List<AttendanceObject> currentlyCheckedIn = attendanceService.currentlyCheckedIn();
+		model.addAttribute("currentlyCheckedIn", currentlyCheckedIn);
+		return "currentlyCheckedIn";
+	}
+
+	@GetMapping({ "/allAttendance" })
 	public String allAttendancePage(Model model) {
 
 		model.addAttribute("appName", appName);
@@ -42,6 +49,19 @@ public class AttendanceWebController {
 		logger.info("...received users: {}", allAttendance);
 
 		return "allAttendance";
+	}
+
+	@GetMapping({ "weeklyHours" })
+	public String weeklyHours(Model model) {
+		List<AttendanceObject> weeklyHours = attendanceService.weeklyHours();
+		double total = 0;
+		for (AttendanceObject pojo : weeklyHours) {
+			total += pojo.getTimeSpent();
+		}
+		model.addAttribute("weeklyHours", weeklyHours);
+		model.addAttribute("total", total);
+
+		return "weeklyHours";
 	}
 
 	@GetMapping({ "attendanceByName/{name}" })
