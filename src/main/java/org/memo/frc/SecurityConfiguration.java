@@ -1,4 +1,4 @@
-package com.example.springbootdemo;
+package org.memo.frc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
