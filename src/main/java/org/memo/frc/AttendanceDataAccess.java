@@ -28,7 +28,7 @@ public class AttendanceDataAccess {
 	private String url = "jdbc:mysql://database-1.crbahpmj0o55.us-east-1.rds.amazonaws.com:3306/team7587?";
 	private String userName = "admin";
 	private String password = "awsdbadmin127";
-
+	
 	public AttendanceDataAccess() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -107,17 +107,17 @@ public class AttendanceDataAccess {
 		return conn;
 	}
 
-	public AttendanceObject getAttendanceById(int id) {
+	public Attendance getAttendanceById(int id) {
 		if (id < 0) {
 			return null;
 		}
-		AttendanceObject pojo = null;
+		Attendance pojo = null;
 		try {
 			state = getConnection().createStatement();
 			rs = state.executeQuery("Select * from `attendance` where `id` = " + id);
 
 			while (rs.next()) {
-				pojo = new AttendanceObject(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("timeIn"),
+				pojo = new Attendance(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("timeIn"),
 						rs.getTimestamp("timeOut"), rs.getString("event"));
 			}
 			state.close();
@@ -128,10 +128,10 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public AttendanceObject constructSingleAttendanceObjectFromResultSet(ResultSet rs) {
+	public Attendance constructSingleAttendanceObjectFromResultSet(ResultSet rs) {
 		try {
 			if (rs.next()) {
-				return new AttendanceObject(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("timeIn"),
+				return new Attendance(rs.getInt("id"), rs.getString("name"), rs.getTimestamp("timeIn"),
 						rs.getTimestamp("timeOut"), rs.getString("event"));
 			} else {
 				return null;
@@ -142,21 +142,21 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public List<AttendanceObject> getAttendanceByName(String queryName) {
+	public List<Attendance> getAttendanceByName(String queryName) {
 		try {
 			state = getConnection().createStatement();
 			rs = state.executeQuery("Select * from `attendance` where name = \"" + queryName + "\"");
 			int id;
 			String name, event;
 			java.sql.Timestamp timeIn, timeOut;
-			ArrayList<AttendanceObject> attendancePOJOs = new ArrayList<>();
+			List<Attendance> attendancePOJOs = new ArrayList<>();
 			while (rs.next()) {
 				id = rs.getInt("id");
 				name = rs.getString("name");
 				timeIn = rs.getTimestamp("timeIn");
 				timeOut = rs.getTimestamp("timeOut");
 				event = rs.getString("event");
-				attendancePOJOs.add(new AttendanceObject(id, name, timeIn, timeOut, event));
+				attendancePOJOs.add(new Attendance(id, name, timeIn, timeOut, event));
 			}
 			state.close();
 			rs.close();
@@ -168,15 +168,15 @@ public class AttendanceDataAccess {
 
 	}
 
-	public List<AttendanceObject> getAllAttendance() {
+	public List<Attendance> getAllAttendance() {
 		try {
 			state = getConnection().createStatement();
 			rs = state.executeQuery("Select * from `attendance`");
 			int id, timeSpent;
 			String name, event;
 			java.sql.Timestamp timeIn, timeOut;
-			ArrayList<AttendanceObject> attendancePOJOs = new ArrayList<>();
-			AttendanceObject pojo;
+			List<Attendance> attendancePOJOs = new ArrayList<>();
+			Attendance pojo;
 			ResultSet rs2;
 			Statement state2 = getConnection().createStatement();
 			while (rs.next()) {
@@ -185,7 +185,7 @@ public class AttendanceDataAccess {
 				timeIn = rs.getTimestamp("timeIn");
 				timeOut = rs.getTimestamp("timeOut");
 				event = rs.getString("event");
-				pojo = new AttendanceObject(id, name, timeIn, timeOut, event);
+				pojo = new Attendance(id, name, timeIn, timeOut, event);
 				rs2 = state2.executeQuery(
 						"select timestampdiff (minute, timeIn, timeOut) as totalTime from `attendance` where id = "
 								+ id);
@@ -202,7 +202,7 @@ public class AttendanceDataAccess {
 
 	}
 
-	public AttendanceObject updateCheckoutTime(AttendanceObject att) {
+	public Attendance updateCheckoutTime(Attendance att) {
 		try {
 			state = getConnection().createStatement();
 			state.executeUpdate(
@@ -239,7 +239,7 @@ public class AttendanceDataAccess {
 //		return att;
 //	}
 
-	public AttendanceObject insertCheckIn(AttendanceObject att) {
+	public Attendance insertCheckIn(Attendance att) {
 		if (att == null) {
 			return null;
 		}
@@ -257,7 +257,7 @@ public class AttendanceDataAccess {
 		return att;
 	}
 
-	public boolean confirmCheck(AttendanceObject att) {
+	public boolean confirmCheck(Attendance att) {
 		try {
 			state = getConnection().createStatement();
 			if (att.getTimeOut() == null) {
@@ -278,19 +278,24 @@ public class AttendanceDataAccess {
 		return false;
 	}
 
-	public List<AttendanceObject> currentlyCheckedIn() {
+	public List<Attendance> currentlyCheckedIn() {
+		return currentlyCheckedIn(true);
+	}
+
+	public List<Attendance> currentlyCheckedIn(boolean checkedInOnly) {
 		try {
 			state = getConnection().createStatement();
-			ArrayList<AttendanceObject> currentlyCheckedIn = new ArrayList<>();
+			List<Attendance> currentlyCheckedIn = new ArrayList<>();
 			Date now = new java.util.Date();
 			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String date = format.format(now);
-			String sql = "select * from `attendance` where date(timeIn) = '" + date + "' and timeOut is null";
+			String sql = "select * from `attendance` where date(timeIn) = '" + date
+					+ (checkedInOnly ? "' and timeOut is null" : "");
 			rs = state.executeQuery(sql);
 			String name;
 			while (rs.next()) {
 				name = rs.getString("name");
-				currentlyCheckedIn.add(new AttendanceObject(null, name, null, null, null));
+				currentlyCheckedIn.add(new Attendance(null, name, null, null, null));
 			}
 			state.close();
 			rs.close();
@@ -301,27 +306,34 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public List<AttendanceObject> weeklyHours() {
+//	public List<Attendance> weeklyHours() {
+//		Date now = new java.util.Date();
+//		DateFormat format = new SimpleDateFormat("ww");
+//		String weekStr = format.format(now);
+//		int week = Integer.parseInt(weekStr);
+//	}
+
+	public List<Attendance> weeklyHours() { // parameterize time ranges; give current week by default, else take
+											// user-given time range
 		try {
 			state = getConnection().createStatement();
+			String name;
+			double time;
+			int SQLtime;
 			Date now = new java.util.Date();
 			DateFormat format = new SimpleDateFormat("ww");
 			String weekStr = format.format(now);
 			int week = Integer.parseInt(weekStr);
-			System.out.println(week);
+			List<Attendance> weeklyHours = new ArrayList<>();
+			Attendance pojo;
 			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) = "
 					+ (week - 1);
 			rs = state.executeQuery(sql);
-			String name;
-			double time;
-			int SQLtime;
-			ArrayList<AttendanceObject> weeklyHours = new ArrayList<>();
-			AttendanceObject pojo;
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
 				time = (SQLtime / 60) + (0.25 * (SQLtime % 60 / 15));
-				pojo = new AttendanceObject(null, name, null, null, null);
+				pojo = new Attendance(null, name, null, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
 			}
@@ -334,24 +346,28 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public AttendanceObject scanCheck(String name) {
+	public Attendance scanCheck(String name) {
 		if (name == null || name.isEmpty()) {
 			return null;
 		}
 		try {
 			state = getConnection().createStatement();
-			AttendanceObject att = null;
+			Date now = new java.util.Date();
+			DateFormat format = new SimpleDateFormat("DDD");
+			String dayStr = format.format(now);
+			int day = Integer.parseInt(dayStr);
+			Attendance att = null;
 			String sql = "select max(timeIn) as maxTimeIn from `attendance` where name = \"" + name + "\"";
 			rs = state.executeQuery(sql);
 			if (rs.next() && rs.getTimestamp("maxTimeIn") != null) { // has history
 				Timestamp time = rs.getTimestamp("maxTimeIn");
-				String sql2 = "select * from `attendance` where timeIn = '" + time + "' and name = \"" + name + "\"";
+				String sql2 = "select * from `attendance` where timeIn = '" + time + "' and dayofyear(timeIn) = " + day
+						+ " and name = \"" + name + "\"";
 				rs.close();
 				state = getConnection().createStatement();
 				rs = state.executeQuery(sql2);
 				att = constructSingleAttendanceObjectFromResultSet(rs);
-				System.out.println(att);
-				if (att.getTimeOut() == null) { // checking out
+				if (att != null && att.getTimeOut() == null) { // checking out
 					att.setTimeOut(new Timestamp(new java.util.Date().getTime()));
 					state.close();
 					rs.close();
@@ -359,7 +375,7 @@ public class AttendanceDataAccess {
 				}
 			}
 			// else, checking in
-			att = new AttendanceObject(null, name, new Timestamp(new java.util.Date().getTime()), null, "meeting");
+			att = new Attendance(null, name, new Timestamp(new java.util.Date().getTime()), null, "meeting");
 			state.close();
 			rs.close();
 			return att;

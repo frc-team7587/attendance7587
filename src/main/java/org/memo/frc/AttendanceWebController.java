@@ -33,7 +33,7 @@ public class AttendanceWebController {
 
 	@GetMapping({ "/" })
 	public String currentlyCheckedIn(Model model) {
-		List<AttendanceObject> currentlyCheckedIn = attendanceService.currentlyCheckedIn();
+		List<Attendance> currentlyCheckedIn = attendanceService.currentlyCheckedIn();
 		model.addAttribute("currentlyCheckedIn", currentlyCheckedIn);
 		return "currentlyCheckedIn";
 	}
@@ -43,7 +43,7 @@ public class AttendanceWebController {
 
 		model.addAttribute("appName", appName);
 
-		List<AttendanceObject> allAttendance = attendanceService.getAllAttendance();
+		List<Attendance> allAttendance = attendanceService.getAllAttendance();
 		model.addAttribute("allAttendance", allAttendance);
 
 		logger.info("...received users: {}", allAttendance);
@@ -53,9 +53,9 @@ public class AttendanceWebController {
 
 	@GetMapping({ "weeklyHours" })
 	public String weeklyHours(Model model) {
-		List<AttendanceObject> weeklyHours = attendanceService.weeklyHours();
+		List<Attendance> weeklyHours = attendanceService.weeklyHours();
 		double total = 0;
-		for (AttendanceObject pojo : weeklyHours) {
+		for (Attendance pojo : weeklyHours) {
 			total += pojo.getTimeSpent();
 		}
 		model.addAttribute("weeklyHours", weeklyHours);
@@ -66,14 +66,14 @@ public class AttendanceWebController {
 
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {
-		List<AttendanceObject> attendanceByName = attendanceService.getAttendanceByName(name);
+		List<Attendance> attendanceByName = attendanceService.getAttendanceByName(name);
 		model.addAttribute("attendanceByName", attendanceByName);
 		return "attendanceByName";
 	}
 
 	@GetMapping({ "scanCheck/{name}" })
 	public String insertPage(@PathVariable("name") String name, Model model) {
-		AttendanceObject result = attendanceService.scanCheck(name);
+		Attendance result = attendanceService.scanCheck(name);
 		model.addAttribute("scanResult", result);
 		model.addAttribute("isCheckIn", attendanceService.getIsCheckIn());
 		return "scanCheck";
@@ -94,7 +94,7 @@ public class AttendanceWebController {
 	}
 
 	@PostMapping({ "/confirmCheck" })
-	public String confirmCheck(@ModelAttribute AttendanceObject att, Model model) {
+	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
 		model.addAttribute("scanResult", attendanceService.confirmCheck(att));
 		return "confirmCheck";
 	}
