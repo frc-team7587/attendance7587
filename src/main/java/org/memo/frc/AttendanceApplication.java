@@ -5,11 +5,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class SpringbootDemoApplication 
+public class AttendanceApplication 
 	extends SpringBootServletInitializer{		// needed for running .war in tomcat
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringbootDemoApplication.class, args);
+		SpringApplication.run(AttendanceApplication.class, args);
 	}
-
+	
+	//generics
+	
+	//overloading
 }

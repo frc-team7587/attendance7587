@@ -1,7 +1,6 @@
 package org.memo.frc;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,29 +13,38 @@ public class AttendanceService {
 	@Autowired
 	private AttendanceDataAccess attDAO;
 
-	private List<AttendanceObject> selectedAttendance;
+	private List<Attendance> selectedAttendance;
 
-	public List<AttendanceObject> getAllAttendance() {
+	public List<Attendance> getAllAttendance() {
 		selectedAttendance = attDAO.getAllAttendance();
 		return selectedAttendance;
 	}
 
-	public List<AttendanceObject> getAttendanceByName(String name) {
+	public List<Attendance> getAttendanceByName(String name) {
 		selectedAttendance = attDAO.getAttendanceByName(name);
 		return selectedAttendance;
 	}
 
+	public List<Attendance> currentlyCheckedIn() {
+		selectedAttendance = attDAO.currentlyCheckedIn();
+		return selectedAttendance;
+	}
+
+	public List<Attendance> weeklyHours() {
+		selectedAttendance = attDAO.weeklyHours();
+		return selectedAttendance;
+	}
 //	public AttendanceObject checkout(String name) {
 //		return attDAO.updateCheckoutTime(name);
 //	}
 
-	public AttendanceObject scanCheck(String name) {
-		AttendanceObject att = attDAO.scanCheck(name);
+	public Attendance scanCheck(String name) {
+		Attendance att = attDAO.scanCheck(name);
 		isCheckIn = att.getTimeOut() == null;
 		return att;
 	}
 
-	public AttendanceObject confirmCheck(AttendanceObject att) {
+	public Attendance confirmCheck(Attendance att) {
 		return att.getId() != null ? attDAO.updateCheckoutTime(att) : attDAO.insertCheckIn(att);
 	}
 

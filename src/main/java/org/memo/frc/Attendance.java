@@ -2,7 +2,7 @@ package org.memo.frc;
 
 import java.sql.Timestamp;
 
-public class AttendanceObject {
+public class Attendance {
 
 	@Override
 	public String toString() {
@@ -15,8 +15,9 @@ public class AttendanceObject {
 	Timestamp timeIn;
 	Timestamp timeOut;
 	String event;
+	double timeSpent;
 
-	public AttendanceObject(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
+	public Attendance(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -25,11 +26,11 @@ public class AttendanceObject {
 		this.event = event;
 	}
 
-	public AttendanceObject(Integer id, String name, Timestamp timeIn, String event) {
+	public Attendance(Integer id, String name, Timestamp timeIn, String event) {
 		this(id, name, timeIn, null, event);
 	}
 
-	public AttendanceObject() {
+	public Attendance() {
 		super();
 	}
 
@@ -73,4 +74,11 @@ public class AttendanceObject {
 		this.event = event;
 	}
 
+	public void setTimeSpent(double timeSpent) {
+		this.timeSpent = timeSpent;
+	}
+
+	public double getTimeSpent() {
+		return timeSpent;
+	}
 }
