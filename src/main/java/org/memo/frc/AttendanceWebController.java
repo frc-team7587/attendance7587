@@ -63,6 +63,19 @@ public class AttendanceWebController {
 
 		return "weeklyHours";
 	}
+	
+	@PostMapping({"weeklyHours"})
+	public String weeklyHours(@ModelAttribute Date date, Model model) {
+		List<Attendance> weeklyHours = attendanceService.weeklyHours(date);
+		double total = 0;
+		for (Attendance pojo : weeklyHours) {
+			total += pojo.getTimeSpent();
+		}
+		model.addAttribute("weeklyHours", weeklyHours);
+		model.addAttribute("total", total);
+		
+		return "weeklyHours";
+	}
 
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {

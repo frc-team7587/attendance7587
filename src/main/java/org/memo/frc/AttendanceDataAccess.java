@@ -28,7 +28,7 @@ public class AttendanceDataAccess {
 	private String url = "jdbc:mysql://database-1.crbahpmj0o55.us-east-1.rds.amazonaws.com:3306/team7587?";
 	private String userName = "admin";
 	private String password = "awsdbadmin127";
-	
+
 	public AttendanceDataAccess() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -306,28 +306,33 @@ public class AttendanceDataAccess {
 		}
 	}
 
-//	public List<Attendance> weeklyHours() {
-//		Date now = new java.util.Date();
-//		DateFormat format = new SimpleDateFormat("ww");
-//		String weekStr = format.format(now);
-//		int week = Integer.parseInt(weekStr);
-//	}
+	public List<Attendance> weeklyHours() { // default to this week only
+		Date now = new java.util.Date();
+		return weeklyHours(now, now);
+	}
 
-	public List<Attendance> weeklyHours() { // parameterize time ranges; give current week by default, else take
-											// user-given time range
+	public List<Attendance> weeklyHours(Date date1) { // past week to this week
+		Date now = new java.util.Date();
+		return weeklyHours(date1, now);
+	}
+
+	public List<Attendance> weeklyHours(Date date1, Date date2) { // parameterize time ranges; give current week by //
+																	// default, else take user-given time range
 		try {
+			if (date2.getTime() < date1.getTime()) {
+				return null;
+			}
 			state = getConnection().createStatement();
 			String name;
 			double time;
 			int SQLtime;
-			Date now = new java.util.Date();
 			DateFormat format = new SimpleDateFormat("ww");
-			String weekStr = format.format(now);
-			int week = Integer.parseInt(weekStr);
+			int week1 = Integer.parseInt(format.format(date1));
+			int week2 = Integer.parseInt(format.format(date2));
 			List<Attendance> weeklyHours = new ArrayList<>();
 			Attendance pojo;
-			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) = "
-					+ (week - 1);
+			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) < "
+					+ (week2 - 1) + " and week(timeIn,0) > " + week1;
 			rs = state.executeQuery(sql);
 			while (rs.next()) {
 				name = rs.getString("name");

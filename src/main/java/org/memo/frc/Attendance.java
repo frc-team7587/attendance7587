@@ -1,6 +1,9 @@
 package org.memo.frc;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Attendance {
 
@@ -14,7 +17,10 @@ public class Attendance {
 	String name;
 	Timestamp timeIn;
 	Timestamp timeOut;
+	String dateIn;
+	String dateOut;
 	String event;
+	DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 	double timeSpent;
 
 	public Attendance(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
@@ -24,6 +30,16 @@ public class Attendance {
 		this.timeIn = timeIn;
 		this.timeOut = timeOut;
 		this.event = event;
+		dateIn = format.format(new Date(timeIn.getTime()));
+		dateOut = timeOut == null ? null : format.format(new Date(timeOut.getTime()));
+	}
+
+	public String getDateIn() {
+		return dateIn;
+	}
+
+	public String getDateOut() {
+		return dateOut;
 	}
 
 	public Attendance(Integer id, String name, Timestamp timeIn, String event) {

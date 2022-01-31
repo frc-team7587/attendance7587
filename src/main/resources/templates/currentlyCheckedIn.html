@@ -14,6 +14,9 @@
 
 <body>
     <hr>
+    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary" value="To allAttendance"></a>
+    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
+    <hr>
     <table class="table table-hover table-bordered">
         <th>Members that are currently checked in: </th>
         <tr>
@@ -23,8 +26,6 @@
             <td th:text="${u.name}">name</td>
         </tr>
     </table>
-    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary" value="To allAttendance"></a>
-    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
 
 </body>
 

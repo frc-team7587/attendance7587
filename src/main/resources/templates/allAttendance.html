@@ -14,6 +14,9 @@
 <body>
     <h4>Welcome to <span th:text="${appName}">Our App</span></h4>
     <hr>
+    <a th:href="@{/}"><input type=button class="btn btn-primary" value="To currentlyCheckedIn"></a>
+    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
+    <hr>
     <table class="table table-hover table-bordered">
         <tr>
             <th class="hiddenRow">ID</th>
@@ -25,16 +28,14 @@
         </tr>
         <tr th:each="u : ${allAttendance}">
             <td th:text="${u.name}">name</td>
-            <td th:text="${u.timeIn}">timeIn</td>
-            <td th:text="${u.timeOut}">timeOut</td>
+            <td th:text="${u.dateIn}">timeIn</td>
+            <td th:text="${u.dateOut}">timeOut</td>
             <td th:text="${u.event}">event</td>
             <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>
     </table>
     <!-- <form method="post" th:action="@{/}"><input type="checkbox" name="checkInsOnly"
             value="true"><input type=submit class="btn btn-primary" value="To todaysCheckIns"></form> !-->
-    <a th:href="@{/}"><input type=button class="btn btn-primary" value="To currentlyCheckedIn"></a>
-    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
 
 
 </body>
