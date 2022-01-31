@@ -337,7 +337,7 @@ public class AttendanceDataAccess {
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
-				time = (SQLtime / 60) + (0.25 * (SQLtime % 60 / 15));
+				time = (SQLtime / 60) + (0.1 * (SQLtime % 60 / 6));
 				pojo = new Attendance(null, name, null, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
