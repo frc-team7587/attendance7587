@@ -30,8 +30,8 @@ public class Attendance {
 		this.timeIn = timeIn;
 		this.timeOut = timeOut;
 		this.event = event;
-		dateIn = format.format(new Date(timeIn.getTime()));
-		dateOut = timeOut == null ? null : format.format(new Date(timeOut.getTime()));
+		dateIn = timeIn != null? format.format(new Date(timeIn.getTime())) : null;
+		dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
 	}
 
 	public String getDateIn() {
