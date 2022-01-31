@@ -94,6 +94,12 @@ public class AttendanceDataAccess {
 //		}
 	}
 
+	private double convertToHours(int minutes) {
+		double hours = (minutes / 60) + (0.1 * ((minutes % 60) / 6));
+		String hourStr = String.format("%.2f", hours);
+		return Double.parseDouble(hourStr);
+	}
+
 	public Connection getConnection() {
 		Connection conn = null;
 		try {
@@ -190,7 +196,7 @@ public class AttendanceDataAccess {
 						"select timestampdiff (minute, timeIn, timeOut) as totalTime from `attendance` where id = "
 								+ id);
 				timeSpent = rs2.next() ? rs2.getInt("totalTime") : -1;
-				pojo.setTimeSpent((timeSpent / 60) + (0.25 * ((timeSpent % 60) / 15)));
+				pojo.setTimeSpent(convertToHours(timeSpent));
 				attendancePOJOs.add(pojo);
 			}
 			state.close();
@@ -337,7 +343,7 @@ public class AttendanceDataAccess {
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
-				time = (SQLtime / 60) + (0.1 * (SQLtime % 60 / 6));
+				time = convertToHours(SQLtime);
 				pojo = new Attendance(null, name, null, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
