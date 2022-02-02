@@ -51,6 +51,7 @@ public class AttendanceService {
 	}
 
 	public Attendance confirmCheck(Attendance att) {
+		System.out.println(att);
 		return att.getId() != null ? attDAO.updateCheckoutTime(att) : attDAO.insertCheckIn(att);
 	}
 

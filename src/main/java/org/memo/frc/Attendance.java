@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Attendance {
-
 	@Override
 	public String toString() {
 		return "AttendanceObject [id = " + id + ", name = " + name + ", timeIn = " + timeIn + ", timeOut = " + timeOut
@@ -20,18 +19,39 @@ public class Attendance {
 	String dateIn;
 	String dateOut;
 	String event;
-	DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+	public static DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 	double timeSpent;
 
 	public Attendance(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.timeIn = timeIn;
 		this.timeOut = timeOut;
 		this.event = event;
-		dateIn = timeIn != null? format.format(new Date(timeIn.getTime())) : null;
+		dateIn = timeIn != null ? format.format(new Date(timeIn.getTime())) : null;
 		dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
+	}
+
+	public Attendance(Integer id, String name, String dateIn, String dateOut, String event) {
+		this.id = id;
+		this.name = name;
+		this.dateIn = dateIn;
+		this.dateOut = dateOut;
+		this.event = event;
+		timeIn = new Timestamp(new java.util.Date().getTime());
+
+//		this.event = event;
+//		timeIn.setTime(this.dateIn);
+//		timeOut.setTime(this.dateOut);
+	}
+
+	public Attendance(Integer id, String name, Timestamp timeIn, String event) {
+		this(id, name, timeIn, null, event);
+	}
+
+	public Attendance(Attendance att) {
+		this(att.getId(), att.getName(), new Timestamp(att.getTimeIn().getTime()),
+				new Timestamp(att.getTimeOut().getTime()), att.getEvent());
 	}
 
 	public String getDateIn() {
@@ -42,9 +62,13 @@ public class Attendance {
 		return dateOut;
 	}
 
-	public Attendance(Integer id, String name, Timestamp timeIn, String event) {
-		this(id, name, timeIn, null, event);
-	}
+//	public void setDateIn(Timestamp time) {
+//		dateIn.setTime(time != null ? time.getTime() : null);
+//	}
+//
+//	public void setDateOut(Timestamp time) {
+//		dateOut.setTime(time != null ? time.getTime() : null);
+//	}
 
 	public Attendance() {
 		super();
@@ -72,6 +96,7 @@ public class Attendance {
 
 	public void setTimeIn(Timestamp timeIn) {
 		this.timeIn = timeIn;
+		dateIn = timeIn != null ? format.format(new Date(timeIn.getTime())) : null;
 	}
 
 	public Timestamp getTimeOut() {
@@ -80,6 +105,7 @@ public class Attendance {
 
 	public void setTimeOut(Timestamp timeOut) {
 		this.timeOut = timeOut;
+		dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
 	}
 
 	public String getEvent() {

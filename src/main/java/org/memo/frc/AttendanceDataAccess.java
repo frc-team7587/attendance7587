@@ -299,9 +299,11 @@ public class AttendanceDataAccess {
 					+ (checkedInOnly ? "' and timeOut is null" : "");
 			rs = state.executeQuery(sql);
 			String name;
+			Timestamp timeIn;
 			while (rs.next()) {
 				name = rs.getString("name");
-				currentlyCheckedIn.add(new Attendance(null, name, null, null, null));
+				timeIn = rs.getTimestamp("timeIn");
+				currentlyCheckedIn.add(new Attendance(null, name, timeIn, null, null));
 			}
 			state.close();
 			rs.close();
@@ -330,6 +332,7 @@ public class AttendanceDataAccess {
 			}
 			state = getConnection().createStatement();
 			String name;
+			Timestamp timeIn;
 			double time;
 			int SQLtime;
 			DateFormat format = new SimpleDateFormat("ww");
@@ -337,14 +340,15 @@ public class AttendanceDataAccess {
 			int week2 = Integer.parseInt(format.format(date2));
 			List<Attendance> weeklyHours = new ArrayList<>();
 			Attendance pojo;
-			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) < "
-					+ (week2 - 1) + " and week(timeIn,0) > " + week1;
+			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime, timeIn from `attendance` where week(timeIn,0) <= "
+					+ (week2) + " and week(timeIn,0) >= " + (week1 - 1);
 			rs = state.executeQuery(sql);
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
+				timeIn = rs.getTimestamp("timeIn");
 				time = convertToHours(SQLtime);
-				pojo = new Attendance(null, name, null, null, null);
+				pojo = new Attendance(null, name, timeIn, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
 			}
@@ -386,7 +390,8 @@ public class AttendanceDataAccess {
 				}
 			}
 			// else, checking in
-			att = new Attendance(null, name, new Timestamp(new java.util.Date().getTime()), null, "meeting");
+
+			att = new Attendance(null, name, Attendance.format.format(new java.util.Date()), null, "meeting");
 			state.close();
 			rs.close();
 			return att;

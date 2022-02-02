@@ -46,8 +46,6 @@ public class AttendanceWebController {
 		List<Attendance> allAttendance = attendanceService.getAllAttendance();
 		model.addAttribute("allAttendance", allAttendance);
 
-		logger.info("...received users: {}", allAttendance);
-
 		return "allAttendance";
 	}
 
