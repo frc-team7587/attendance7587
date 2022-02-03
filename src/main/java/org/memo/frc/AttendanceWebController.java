@@ -34,6 +34,7 @@ public class AttendanceWebController {
 	@GetMapping({ "/" })
 	public String currentlyCheckedIn(Model model) {
 		List<Attendance> currentlyCheckedIn = attendanceService.currentlyCheckedIn();
+		model.addAttribute("appName", appName);
 		model.addAttribute("currentlyCheckedIn", currentlyCheckedIn);
 		return "currentlyCheckedIn";
 	}
@@ -56,6 +57,7 @@ public class AttendanceWebController {
 		for (Attendance pojo : weeklyHours) {
 			total += pojo.getTimeSpent();
 		}
+		model.addAttribute("appName", appName);
 		model.addAttribute("weeklyHours", weeklyHours);
 		model.addAttribute("total", total);
 
@@ -69,6 +71,7 @@ public class AttendanceWebController {
 		for (Attendance pojo : weeklyHours) {
 			total += pojo.getTimeSpent();
 		}
+		model.addAttribute("appName", appName);
 		model.addAttribute("weeklyHours", weeklyHours);
 		model.addAttribute("total", total);
 		
@@ -78,6 +81,7 @@ public class AttendanceWebController {
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {
 		List<Attendance> attendanceByName = attendanceService.getAttendanceByName(name);
+		model.addAttribute("appName", appName);
 		model.addAttribute("attendanceByName", attendanceByName);
 		return "attendanceByName";
 	}
@@ -85,6 +89,7 @@ public class AttendanceWebController {
 	@GetMapping({ "scanCheck/{name}" })
 	public String insertPage(@PathVariable("name") String name, Model model) {
 		Attendance result = attendanceService.scanCheck(name);
+		model.addAttribute("appName", appName);
 		model.addAttribute("scanResult", result);
 		model.addAttribute("isCheckIn", attendanceService.getIsCheckIn());
 		return "scanCheck";
@@ -106,6 +111,7 @@ public class AttendanceWebController {
 
 	@PostMapping({ "/confirmCheck" })
 	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
+		model.addAttribute("appName", appName);
 		model.addAttribute("scanResult", attendanceService.confirmCheck(att));
 		return "confirmCheck";
 	}
