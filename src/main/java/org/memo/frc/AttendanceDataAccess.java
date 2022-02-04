@@ -28,7 +28,7 @@ public class AttendanceDataAccess {
 	private String url = "jdbc:mysql://database-1.crbahpmj0o55.us-east-1.rds.amazonaws.com:3306/team7587?";
 	private String userName = "admin";
 	private String password = "awsdbadmin127";
-	
+
 	public AttendanceDataAccess() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -92,6 +92,12 @@ public class AttendanceDataAccess {
 //			res.close();
 //			state.close();
 //		}
+	}
+
+	private double convertToHours(int minutes) {
+		double hours = (minutes / 60) + (0.1 * ((minutes % 60) / 6));
+		String hourStr = String.format("%.2f", hours);
+		return Double.parseDouble(hourStr);
 	}
 
 	public Connection getConnection() {
@@ -190,7 +196,7 @@ public class AttendanceDataAccess {
 						"select timestampdiff (minute, timeIn, timeOut) as totalTime from `attendance` where id = "
 								+ id);
 				timeSpent = rs2.next() ? rs2.getInt("totalTime") : -1;
-				pojo.setTimeSpent((timeSpent / 60) + (0.25 * ((timeSpent % 60) / 15)));
+				pojo.setTimeSpent(convertToHours(timeSpent));
 				attendancePOJOs.add(pojo);
 			}
 			state.close();
@@ -293,9 +299,11 @@ public class AttendanceDataAccess {
 					+ (checkedInOnly ? "' and timeOut is null" : "");
 			rs = state.executeQuery(sql);
 			String name;
+			Timestamp timeIn;
 			while (rs.next()) {
 				name = rs.getString("name");
-				currentlyCheckedIn.add(new Attendance(null, name, null, null, null));
+				timeIn = rs.getTimestamp("timeIn");
+				currentlyCheckedIn.add(new Attendance(null, name, timeIn, null, null));
 			}
 			state.close();
 			rs.close();
@@ -306,34 +314,41 @@ public class AttendanceDataAccess {
 		}
 	}
 
-//	public List<Attendance> weeklyHours() {
-//		Date now = new java.util.Date();
-//		DateFormat format = new SimpleDateFormat("ww");
-//		String weekStr = format.format(now);
-//		int week = Integer.parseInt(weekStr);
-//	}
+	public List<Attendance> weeklyHours() { // default to this week only
+		Date now = new java.util.Date();
+		return weeklyHours(now, now);
+	}
 
-	public List<Attendance> weeklyHours() { // parameterize time ranges; give current week by default, else take
-											// user-given time range
+	public List<Attendance> weeklyHours(Date date1) { // past week to this week
+		Date now = new java.util.Date();
+		return weeklyHours(date1, now);
+	}
+
+	public List<Attendance> weeklyHours(Date date1, Date date2) { // parameterize time ranges; give current week by //
+																	// default, else take user-given time range
 		try {
+			if (date2.getTime() < date1.getTime()) {
+				return null;
+			}
 			state = getConnection().createStatement();
 			String name;
+			Timestamp timeIn;
 			double time;
 			int SQLtime;
-			Date now = new java.util.Date();
 			DateFormat format = new SimpleDateFormat("ww");
-			String weekStr = format.format(now);
-			int week = Integer.parseInt(weekStr);
+			int week1 = Integer.parseInt(format.format(date1));
+			int week2 = Integer.parseInt(format.format(date2));
 			List<Attendance> weeklyHours = new ArrayList<>();
 			Attendance pojo;
-			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime from `attendance` where week(timeIn,0) = "
-					+ (week - 1);
+			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime, timeIn from `attendance` where week(timeIn,0) <= "
+					+ (week2) + " and week(timeIn,0) >= " + (week1 - 1);
 			rs = state.executeQuery(sql);
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
-				time = (SQLtime / 60) + (0.25 * (SQLtime % 60 / 15));
-				pojo = new Attendance(null, name, null, null, null);
+				timeIn = rs.getTimestamp("timeIn");
+				time = convertToHours(SQLtime);
+				pojo = new Attendance(null, name, timeIn, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
 			}
@@ -375,7 +390,8 @@ public class AttendanceDataAccess {
 				}
 			}
 			// else, checking in
-			att = new Attendance(null, name, new Timestamp(new java.util.Date().getTime()), null, "meeting");
+
+			att = new Attendance(null, name, Attendance.format.format(new java.util.Date()), null, "meeting");
 			state.close();
 			rs.close();
 			return att;

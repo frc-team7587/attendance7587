@@ -1,6 +1,7 @@
 package org.memo.frc;
 
 import java.sql.Connection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class AttendanceService {
 		selectedAttendance = attDAO.weeklyHours();
 		return selectedAttendance;
 	}
+	
+	public List<Attendance> weeklyHours(Date date) {
+		selectedAttendance = attDAO.weeklyHours(date);
+		return selectedAttendance;
+	}
 //	public AttendanceObject checkout(String name) {
 //		return attDAO.updateCheckoutTime(name);
 //	}
@@ -45,6 +51,7 @@ public class AttendanceService {
 	}
 
 	public Attendance confirmCheck(Attendance att) {
+		System.out.println(att);
 		return att.getId() != null ? attDAO.updateCheckoutTime(att) : attDAO.insertCheckIn(att);
 	}
 
