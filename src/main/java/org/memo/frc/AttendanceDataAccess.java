@@ -9,11 +9,12 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,9 +26,14 @@ public class AttendanceDataAccess {
 //	private String userName = "Admin";
 //	private String password = "AdminSQL@127";
 
-	private String url = "jdbc:mysql://database-1.crbahpmj0o55.us-east-1.rds.amazonaws.com:3306/team7587?";
-	private String userName = "admin";
-	private String password = "awsdbadmin127";
+	@Value("${mysql.db.url}")
+	private String url;
+
+	@Value("${mysql.db.username}")
+	private String userName;
+
+	@Value("${mysql.db.pwd}")
+	private String password;
 
 	public AttendanceDataAccess() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 		try {
@@ -105,7 +111,7 @@ public class AttendanceDataAccess {
 		try {
 			Properties props = new Properties();
 			props.setProperty("enabledTLSProtocols", "TLSv1,TLSv1.1,TLSv1.2,TLSv1.3");
-			String connURL = url + "user=" + userName + "&password=" + password;
+			String connURL = url + "?user=" + userName + "&password=" + password;
 			conn = DriverManager.getConnection(connURL);
 		} catch (SQLException e) {
 			e.printStackTrace();
