@@ -1,3 +1,15 @@
 .hiddenRow {
     display:none;
 }
+
+.hdx {
+    background-color: bisque;
+    width:100%;
+}
+
+.hdline {
+    font-size: 1.1em;
+    color: darkblue;
+    padding-left: 5px;
+    font-weight:bold;
+}
