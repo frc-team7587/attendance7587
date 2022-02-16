@@ -12,11 +12,18 @@
 
 </head>
 
-<body class="m-4">
-    <h4><span th:text="${appName}">Our App</span></h4>
-    <hr>
-    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary" value="To allAttendance"></a>
-    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary" value="To weeklyHours"></a>
+<body class="m-3">
+<table class='hdx'><tbody><tr>
+    <td style="width: 90%;">
+        <span th:text="${appName}" class='hdline'></span>
+    </td>
+    <td>
+        <img th:src="@{/logo7587.jpg}" width="64" height="40">
+    </td>
+</tr></tbody></table>
+<hr>
+    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary btn-sm" value="All Attendance"></a>
+    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary btn-sm" value="Weekly Hours"></a>
     <hr>
     <table class="table table-hover table-bordered">
         <th>Members who are currently checked in: </th>
