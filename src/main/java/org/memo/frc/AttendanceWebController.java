@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -64,7 +66,26 @@ public class AttendanceWebController {
 		return "weeklyHours";
 	}
 	
-	@PostMapping({"weeklyHours"})
+
+	@GetMapping("/dwnld-weeklyhours")
+	ResponseEntity<String> downloadWeeklyHourse(){
+		List<Attendance> weeklyHours = attendanceService.weeklyHours();
+		String dlm = ",";
+		StringBuffer buf = new StringBuffer("Name,Hours\n");
+		double total = 0;
+		for (Attendance pojo : weeklyHours) {
+			buf.append(pojo.getName() + dlm + pojo.getTimeSpent()+"\n");
+			total += pojo.getTimeSpent();
+		}
+		buf.append("============,============\n");
+		buf.append("Total" + dlm + total + "\n");
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Attendance_team7587.csv\"")
+                .body(buf.toString());
+	}
+
+	/* @PostMapping({"weeklyHours"})
 	public String weeklyHours(@ModelAttribute Date date, Model model) {
 		List<Attendance> weeklyHours = attendanceService.weeklyHours(date);
 		double total = 0;
@@ -76,7 +97,7 @@ public class AttendanceWebController {
 		model.addAttribute("total", total);
 		
 		return "weeklyHours";
-	}
+	} */
 
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {
@@ -94,6 +115,7 @@ public class AttendanceWebController {
 		model.addAttribute("isCheckIn", attendanceService.getIsCheckIn());
 		return "scanCheck";
 	}
+
 
 	@InitBinder
 	public void binder(WebDataBinder binder) {
