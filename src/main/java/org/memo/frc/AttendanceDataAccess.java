@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,9 +24,10 @@ public class AttendanceDataAccess {
 
 	private Statement state = null;
 	private ResultSet rs = null;
-//	private String url = "jdbc:mysql://localhost:3306/7587attendance?";
+//	private String url = "jdbc:mysql://localhost:3306/7587attendance";
 //	private String userName = "Admin";
 //	private String password = "AdminSQL@127";
+	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Value("${mysql.db.url}")
 	private String url;
@@ -180,10 +183,13 @@ public class AttendanceDataAccess {
 
 	}
 
-	public List<Attendance> getAllAttendance() {
+	public List<Attendance> getAttendance(Date start, Date end) {
 		try {
 			state = getConnection().createStatement();
-			rs = state.executeQuery("Select * from `attendance`");
+
+			String sql = "Select * from `attendance" + ((start == null && end == null) ? "`"
+					: "` where date(timeIn) >= '" + format.format(start) + "' and date(timeIn) <= '" + format.format(end) + "'");
+			rs = state.executeQuery(sql);
 			int id, timeSpent;
 			String name, event;
 			java.sql.Timestamp timeIn, timeOut;
@@ -212,6 +218,10 @@ public class AttendanceDataAccess {
 			return null;
 		}
 
+	}
+
+	public List<Attendance> getAllAttendance() {
+		return getAttendance(null, null);
 	}
 
 	public Attendance updateCheckoutTime(Attendance att) {
@@ -299,7 +309,6 @@ public class AttendanceDataAccess {
 			state = getConnection().createStatement();
 			List<Attendance> currentlyCheckedIn = new ArrayList<>();
 			Date now = new java.util.Date();
-			DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			String date = format.format(now);
 			String sql = "select * from `attendance` where date(timeIn) = '" + date
 					+ (checkedInOnly ? "' and timeOut is null" : "");
@@ -308,7 +317,7 @@ public class AttendanceDataAccess {
 			Timestamp timeIn;
 			while (rs.next()) {
 				name = rs.getString("name");
-				timeIn = rs.getTimestamp("timeIn");
+				timeIn = checkedInOnly ? rs.getTimestamp("timeIn") : null;
 				currentlyCheckedIn.add(new Attendance(null, name, timeIn, null, null));
 			}
 			state.close();
@@ -390,6 +399,7 @@ public class AttendanceDataAccess {
 				att = constructSingleAttendanceObjectFromResultSet(rs);
 				if (att != null && att.getTimeOut() == null) { // checking out
 					att.setTimeOut(new Timestamp(new java.util.Date().getTime()));
+					System.out.println("This is date out: " + att.getDateOut());
 					state.close();
 					rs.close();
 					return att;
@@ -397,7 +407,7 @@ public class AttendanceDataAccess {
 			}
 			// else, checking in
 
-			att = new Attendance(null, name, Attendance.format.format(new java.util.Date()), null, "meeting");
+			att = new Attendance(null, name, new Timestamp(new java.util.Date().getTime()), null, "meeting");
 			state.close();
 			rs.close();
 			return att;

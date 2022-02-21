@@ -13,18 +13,24 @@
 </head>
 
 <body class="m-4">
-    <table class='hdx'><tbody><tr>
-        <td style="width: 90%;">
-            <span th:text="${appName}" class='hdline'></span>
-        </td>
-        <td>
-            <img th:src="@{/logo7587.jpg}" width="64" height="40">
-        </td>
-    </tr></tbody></table>
+    <table class='hdx'>
+        <tbody>
+            <tr>
+                <td style="width: 90%;">
+                    <span th:text="${appName}" class='hdline'></span>
+                </td>
+                <td>
+                    <img th:src="@{/logo7587.jpg}" width="64" height="40">
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <hr>
-    <a th:href="@{/}"><input type=button class="btn btn-primary" value="Current Check-Ins"></a>
-    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary btn-sm" value="Weekly Hours"></a>
     <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary btn-sm" value="All Attendance"></a>
+    <a th:href="@{/}"><input type=button class="btn btn-primary btn-sm" value="Current Check-Ins"></a>
+    <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary btn-sm" value="Weekly Hours"></a>
+    <a th:href="@{/attendanceTimeFrame}"><input type=button class="btn btn-primary btn-sm"
+            value="Attendance by Time Frame"></a>
     <hr>
     <table class="table table-hover table-bordered">
         <tr>

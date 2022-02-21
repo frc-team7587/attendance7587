@@ -21,6 +21,11 @@ public class AttendanceService {
 		return selectedAttendance;
 	}
 
+	public List<Attendance> attendanceTimeFrame(Date start, Date end) {
+		selectedAttendance = attDAO.getAttendance(start, end);
+		return selectedAttendance;
+	}
+
 	public List<Attendance> getAttendanceByName(String name) {
 		selectedAttendance = attDAO.getAttendanceByName(name);
 		return selectedAttendance;
@@ -35,7 +40,7 @@ public class AttendanceService {
 		selectedAttendance = attDAO.weeklyHours();
 		return selectedAttendance;
 	}
-	
+
 	public List<Attendance> weeklyHours(Date date) {
 		selectedAttendance = attDAO.weeklyHours(date);
 		return selectedAttendance;

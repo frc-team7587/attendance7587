@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AttendanceWebController {
@@ -37,6 +38,22 @@ public class AttendanceWebController {
 		model.addAttribute("appName", appName);
 		model.addAttribute("currentlyCheckedIn", currentlyCheckedIn);
 		return "currentlyCheckedIn";
+	}
+
+	@GetMapping({ "attendanceTimeFrame" })
+	public String attendanceTimeFrame(Model model) {
+		model.addAttribute("appName", appName);
+		model.addAttribute("dateHolder", new AttendanceTimeFrame());
+		return "attendanceTimeFrame";
+	}
+
+	@PostMapping({ "attendanceTimeFramePost" })
+	public String attendanceTimeFramePOST(@ModelAttribute AttendanceTimeFrame frame, Model model) {
+		model.addAttribute("appName", appName);
+		System.out.println("start: " + frame.getStart().toString() + "\nend: " + frame.getEnd().toString());
+		List<Attendance> attendanceTimeFrame = attendanceService.attendanceTimeFrame(frame.getStart(), frame.getEnd());
+		model.addAttribute("attendanceTimeFrame", attendanceTimeFrame);
+		return "attendanceTimeFramePost";
 	}
 
 	@GetMapping({ "/allAttendance" })
@@ -63,10 +80,11 @@ public class AttendanceWebController {
 
 		return "weeklyHours";
 	}
-	
-	@PostMapping({"weeklyHours"})
+
+	@PostMapping({ "weeklyHours" })
 	public String weeklyHours(@ModelAttribute Date date, Model model) {
-		List<Attendance> weeklyHours = attendanceService.weeklyHours(date);
+		List<Attendance> weeklyHours = date == null ? attendanceService.weeklyHours()
+				: attendanceService.weeklyHours(date);
 		double total = 0;
 		for (Attendance pojo : weeklyHours) {
 			total += pojo.getTimeSpent();
@@ -74,7 +92,7 @@ public class AttendanceWebController {
 		model.addAttribute("appName", appName);
 		model.addAttribute("weeklyHours", weeklyHours);
 		model.addAttribute("total", total);
-		
+
 		return "weeklyHours";
 	}
 
@@ -95,6 +113,13 @@ public class AttendanceWebController {
 		return "scanCheck";
 	}
 
+	@PostMapping({ "/confirmCheck" })
+	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
+		model.addAttribute("appName", appName);
+		model.addAttribute("scanResult", attendanceService.confirmCheck(att));
+		return "confirmCheck";
+	}
+
 	@InitBinder
 	public void binder(WebDataBinder binder) {
 		binder.registerCustomEditor(Timestamp.class, new PropertyEditorSupport() {
@@ -107,12 +132,5 @@ public class AttendanceWebController {
 				}
 			}
 		});
-	}
-
-	@PostMapping({ "/confirmCheck" })
-	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
-		model.addAttribute("appName", appName);
-		model.addAttribute("scanResult", attendanceService.confirmCheck(att));
-		return "confirmCheck";
 	}
 }

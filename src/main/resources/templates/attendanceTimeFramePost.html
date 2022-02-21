@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
 
 <head>
@@ -7,12 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link th:href="@{/myStyle.css}" rel="stylesheet">
-
-    <title>Currently Checked In</title>
-
+    <title>Attendance by Time Frame</title>
 </head>
 
-<body class="m-3">
+<body class="m-4">
     <table class='hdx'>
         <tbody>
             <tr>
@@ -33,14 +32,28 @@
             value="Attendance by Time Frame"></a>
     <hr>
     <table class="table table-hover table-bordered">
-        <th>Members who are currently checked in: </th>
-        <tr>
-            <th>NAME</th>
+        <tr style="border-bottom:1px solid;">
+            <th colspan="5">Attendance between Time Frame</th>
         </tr>
-        <tr th:each="u : ${currentlyCheckedIn}">
+        <tr style="border-bottom:1px solid;">
+            <th class="hiddenRow">ID</th>
+            <th>Name</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Event</th>
+            <th>Time Spent (Hrs)</th>
+        </tr>
+        <tr th:each="u : ${attendanceTimeFrame}">
             <td th:text="${u.name}">name</td>
+            <td th:text="${#temporals.format(u.dateIn, 'MM/dd/yyyy hh:mm:ss a')}">timeIn</td>
+            <td th:text="${#temporals.format(u.dateOut, 'MM/dd/yyyy hh:mm:ss a')}">timeOut</td>
+            <td th:text="${u.event}">event</td>
+            <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>
     </table>
+    <!-- <form method="post" th:action="@{/}"><input type="checkbox" name="checkInsOnly"
+            value="true"><input type=submit class="btn btn-primary" value="To todaysCheckIns"></form> !-->
+
 
 </body>
 
