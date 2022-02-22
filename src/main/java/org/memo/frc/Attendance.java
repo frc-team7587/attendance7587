@@ -1,8 +1,8 @@
 package org.memo.frc;
 
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Attendance {
@@ -14,53 +14,37 @@ public class Attendance {
 
 	Integer id;
 	String name;
-	Timestamp timeIn;
-	Timestamp timeOut;
-	String dateIn;
-	String dateOut;
+	LocalDateTime timeIn;
+	LocalDateTime timeOut;
 	String event;
 	public static DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 	double timeSpent;
 
-	public Attendance(Integer id, String name, Timestamp timeIn, Timestamp timeOut, String event) {
+	public Attendance(Integer id, String name, LocalDateTime timeIn, LocalDateTime timeOut, String event) {
 		this.id = id;
 		this.name = name;
 		this.timeIn = timeIn;
 		this.timeOut = timeOut;
 		this.event = event;
-		dateIn = timeIn != null ? format.format(new Date(timeIn.getTime())) : null;
-		dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
 	}
 
-	public Attendance(Integer id, String name, String dateIn, String dateOut, String event) {
-		this.id = id;
-		this.name = name;
-		this.dateIn = dateIn;
-		this.dateOut = dateOut;
-		this.event = event;
-		timeIn = new Timestamp(new java.util.Date().getTime());
-
-//		this.event = event;
-//		timeIn.setTime(this.dateIn);
-//		timeOut.setTime(this.dateOut);
+	public Attendance(String name, LocalDateTime timeIn) {
+		this(null, name, timeIn, null, "Meeting");
 	}
 
-	public Attendance(Integer id, String name, Timestamp timeIn, String event) {
-		this(id, name, timeIn, null, event);
-	}
-
-	public Attendance(Attendance att) {
+	/* public Attendance(Attendance att) {
 		this(att.getId(), att.getName(), new Timestamp(att.getTimeIn().getTime()),
 				new Timestamp(att.getTimeOut().getTime()), att.getEvent());
-	}
+		
+	} */
 
-	public String getDateIn() {
-		return dateIn;
-	}
+	// public String getDateIn() {
+	// 	return dateIn;
+	// }
 
-	public String getDateOut() {
-		return dateOut;
-	}
+	// public String getDateOut() {
+	// 	return dateOut;
+	// }
 
 //	public void setDateIn(Timestamp time) {
 //		dateIn.setTime(time != null ? time.getTime() : null);
@@ -90,22 +74,22 @@ public class Attendance {
 		this.name = name;
 	}
 
-	public Timestamp getTimeIn() {
+	public LocalDateTime getTimeIn() {
 		return timeIn;
 	}
 
-	public void setTimeIn(Timestamp timeIn) {
+	public void setTimeIn(LocalDateTime timeIn) {
 		this.timeIn = timeIn;
-		dateIn = timeIn != null ? format.format(new Date(timeIn.getTime())) : null;
+		// dateIn = timeIn != null ? format.format(new Date(timeIn.getTime())) : null;
 	}
 
-	public Timestamp getTimeOut() {
+	public LocalDateTime getTimeOut() {
 		return timeOut;
 	}
 
-	public void setTimeOut(Timestamp timeOut) {
+	public void setTimeOut(LocalDateTime timeOut) {
 		this.timeOut = timeOut;
-		dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
+		// dateOut = timeOut != null ? format.format(new Date(timeOut.getTime())) : null;
 	}
 
 	public String getEvent() {

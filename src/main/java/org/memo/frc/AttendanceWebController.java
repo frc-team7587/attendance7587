@@ -117,7 +117,7 @@ public class AttendanceWebController {
 	}
 
 
-	@InitBinder
+/* 	@InitBinder
 	public void binder(WebDataBinder binder) {
 		binder.registerCustomEditor(Timestamp.class, new PropertyEditorSupport() {
 			public void setAsText(String value) {
@@ -129,7 +129,7 @@ public class AttendanceWebController {
 				}
 			}
 		});
-	}
+	} */
 
 	@PostMapping({ "/confirmCheck" })
 	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
