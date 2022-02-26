@@ -50,16 +50,16 @@ public class AttendanceWebController {
 		return "attendanceTimeFramePost";
 	}
 
-	@GetMapping({ "/allAttendance" })
-	public String allAttendancePage(Model model) {
-
-		model.addAttribute("appName", appName);
-
-		List<Attendance> allAttendance = attendanceService.getAllAttendance();
-		model.addAttribute("allAttendance", allAttendance);
-
-		return "allAttendance";
-	}
+//	@GetMapping({ "/allAttendance" })
+//	public String allAttendancePage(Model model) {
+//
+//		model.addAttribute("appName", appName);
+//
+//		List<Attendance> allAttendance = attendanceService.getAllAttendance();
+//		model.addAttribute("allAttendance", allAttendance);
+//
+//		return "allAttendance";
+//	}
 
 	@GetMapping({ "weeklyHours" })
 	public String weeklyHours(Model model) {

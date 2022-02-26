@@ -219,9 +219,9 @@ public class AttendanceDataAccess {
 
 	}
 
-	public List<Attendance> getAllAttendance() {
-		return getAttendance(null, null);
-	}
+//	public List<Attendance> getAllAttendance() {
+//		return getAttendance(null, null);
+//	}
 
 	public Attendance updateCheckoutTime(Attendance att) {
 		try {

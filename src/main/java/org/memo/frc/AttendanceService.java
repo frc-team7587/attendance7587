@@ -16,10 +16,10 @@ public class AttendanceService {
 
 	private List<Attendance> selectedAttendance;
 
-	public List<Attendance> getAllAttendance() {
-		selectedAttendance = attDAO.getAllAttendance();
-		return selectedAttendance;
-	}
+//	public List<Attendance> getAllAttendance() {
+//		selectedAttendance = attDAO.getAllAttendance();
+//		return selectedAttendance;
+//	}
 
 	public List<Attendance> attendanceTimeFrame(Date start, Date end) {
 		selectedAttendance = attDAO.getAttendance(start, end);

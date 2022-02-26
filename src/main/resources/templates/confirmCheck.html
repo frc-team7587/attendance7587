@@ -24,7 +24,7 @@
         </tbody>
     </table>
     <hr>
-    <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary btn-sm" value="All Attendance"></a>
+    <!-- <a th:href="@{/allAttendance}"><input type=button class="btn btn-primary btn-sm" value="All Attendance"></a> -->
     <a th:href="@{/}"><input type=button class="btn btn-primary btn-sm" value="Current Check-Ins"></a>
     <a th:href="@{/weeklyHours}"><input type=button class="btn btn-primary btn-sm" value="Weekly Hours"></a>
     <a th:href="@{/attendanceTimeFrame}"><input type=button class="btn btn-primary btn-sm"
@@ -42,11 +42,11 @@
         </tr>
         <tr>
             <th>Time In: </th>
-            <td th:text="${scanResult.timeIn}"></td>
+            <td th:text="${#temporals.format(scanResult.timeIn, 'MM/dd/yyyy hh:mm:ss a')}"></td>
         </tr>
         <tr>
             <th>Time Out: </th>
-            <td th:text="${scanResult.timeOut}"></td>
+            <td th:text="${#temporals.format(scanResult.timeOut, 'MM/dd/yyyy hh:mm:ss a')}"></td>
         </tr>
         <tr>
             <th>Event: </th>
