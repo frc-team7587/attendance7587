@@ -45,8 +45,8 @@
         </tr>
         <tr th:each="u : ${allAttendance}">
             <td th:text="${u.name}">name</td>
-            <td th:text="${#temporals.format(u.dateIn, 'MM/dd/yyyy hh:mm:ss a')}">timeIn</td>
-            <td th:text="${#temporals.format(u.dateOut, 'MM/dd/yyyy hh:mm:ss a')}">timeOut</td>
+            <td th:text="${u.timeIn}">timeIn</td>
+            <td th:text="${u.timeOut}">timeOut</td>
             <td th:text="${u.event}">event</td>
             <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>

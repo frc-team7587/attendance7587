@@ -42,11 +42,11 @@
         </tr>
         <tr>
             <th>Time In: </th>
-            <td th:text="${#temporals.format(scanResult.dateIn, 'MM/dd/yyyy hh:mm:ss a')}"></td>
+            <td th:text="${scanResult.timeIn}"></td>
         </tr>
         <tr>
             <th>Time Out: </th>
-            <td th:text="${#temporals.format(scanResult.dateOut, 'MM/dd/yyyy hh:mm:ss a')}"></td>
+            <td th:text="${scanResult.timeOut}"></td>
         </tr>
         <tr>
             <th>Event: </th>

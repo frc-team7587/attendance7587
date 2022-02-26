@@ -42,8 +42,8 @@
         </tr>
         <tr th:each="u : ${attendanceByName}">
             <td th:text="${u.name}">name</td>
-            <td th:text="${u.dateIn}">timeIn</td>
-            <td th:text="${u.dateOut}">timeOut</td>
+            <td th:text="${u.timeIn}">timeIn</td>
+            <td th:text="${u.timeOut}">timeOut</td>
             <td th:text="${u.event}">event</td>
             <td th:text="${u.timeSpent}">timeSpent</td>
         </tr>

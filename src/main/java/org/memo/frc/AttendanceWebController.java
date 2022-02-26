@@ -1,25 +1,19 @@
 package org.memo.frc;
 
-import java.beans.PropertyEditorSupport;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AttendanceWebController {
@@ -81,20 +75,40 @@ public class AttendanceWebController {
 		return "weeklyHours";
 	}
 
-	@PostMapping({ "weeklyHours" })
-	public String weeklyHours(@ModelAttribute Date date, Model model) {
-		List<Attendance> weeklyHours = date == null ? attendanceService.weeklyHours()
-				: attendanceService.weeklyHours(date);
+	@GetMapping("/dwnld-weeklyhours")
+	ResponseEntity<String> downloadWeeklyHourse() {
+		List<Attendance> weeklyHours = attendanceService.weeklyHours();
+		String dlm = ",";
+		StringBuffer buf = new StringBuffer("Name,Hours\n");
 		double total = 0;
 		for (Attendance pojo : weeklyHours) {
+			buf.append(pojo.getName() + dlm + pojo.getTimeSpent() + "\n");
 			total += pojo.getTimeSpent();
 		}
-		model.addAttribute("appName", appName);
-		model.addAttribute("weeklyHours", weeklyHours);
-		model.addAttribute("total", total);
+		buf.append("============,============\n");
+		buf.append("Total" + dlm + total + "\n");
 
-		return "weeklyHours";
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Attendance_team7587.csv\"")
+				.body(buf.toString());
 	}
+
+	/*
+	 * @PostMapping({"weeklyHours"})
+	 * public String weeklyHours(@ModelAttribute Date date, Model model) {
+	 * List<Attendance> weeklyHours = date == null ? attendanceService.weeklyHours()
+	 * : attendanceService.weeklyHours(date);
+	 * double total = 0;
+	 * for (Attendance pojo : weeklyHours) {
+	 * total += pojo.getTimeSpent();
+	 * }
+	 * model.addAttribute("appName", appName);
+	 * model.addAttribute("weeklyHours", weeklyHours);
+	 * model.addAttribute("total", total);
+	 * 
+	 * return "weeklyHours";
+	 * }
+	 */
 
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {
@@ -113,24 +127,26 @@ public class AttendanceWebController {
 		return "scanCheck";
 	}
 
+	/*
+	 * @InitBinder
+	 * public void binder(WebDataBinder binder) {
+	 * binder.registerCustomEditor(Timestamp.class, new PropertyEditorSupport() {
+	 * public void setAsText(String value) {
+	 * try {
+	 * Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value);
+	 * setValue(new Timestamp(parsedDate.getTime()));
+	 * } catch (ParseException e) {
+	 * setValue(null);
+	 * }
+	 * }
+	 * });
+	 * }
+	 */
+
 	@PostMapping({ "/confirmCheck" })
 	public String confirmCheck(@ModelAttribute Attendance att, Model model) {
 		model.addAttribute("appName", appName);
 		model.addAttribute("scanResult", attendanceService.confirmCheck(att));
 		return "confirmCheck";
-	}
-
-	@InitBinder
-	public void binder(WebDataBinder binder) {
-		binder.registerCustomEditor(Timestamp.class, new PropertyEditorSupport() {
-			public void setAsText(String value) {
-				try {
-					Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value);
-					setValue(new Timestamp(parsedDate.getTime()));
-				} catch (ParseException e) {
-					setValue(null);
-				}
-			}
-		});
 	}
 }
