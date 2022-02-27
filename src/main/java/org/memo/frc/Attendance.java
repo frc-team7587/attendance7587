@@ -17,8 +17,6 @@ public class Attendance {
 	LocalDateTime timeIn;
 	LocalDateTime timeOut;
 	String event;
-	static String zone = "-05:00";
-	public static DateFormat format = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 	double timeSpent;
 
 	public Attendance(Integer id, String name, LocalDateTime timeIn, LocalDateTime timeOut, String event) {

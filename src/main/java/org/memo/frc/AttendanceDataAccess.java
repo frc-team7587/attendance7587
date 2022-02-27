@@ -23,9 +23,6 @@ public class AttendanceDataAccess {
 
 	private Statement state = null;
 	private ResultSet rs = null;
-//	private String url = "jdbc:mysql://localhost:3306/7587attendance";
-//	private String userName = "Admin";
-//	private String password = "AdminSQL@127";
 	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Value("${mysql.db.url}")
@@ -41,72 +38,12 @@ public class AttendanceDataAccess {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
 			TimeZone.setDefault(TimeZone.getTimeZone("EST"));
-//			do {
-//				input = Integer.parseInt(JOptionPane.showInputDialog(null,
-//						"1. Read database\n2. Insert attendance\n3. Update database\n4. Delete from database\n5. Quit"));
-//				switch (input) {
-//				case 1:
-//					System.out.println(getAllAttendance());
-//					break;
-//				case 2:
-//					System.out.println(insertCheckInTime(new AttendanceObject(-1,
-//							JOptionPane.showInputDialog("Enter name: "), new Date(new java.util.Date().getTime()),
-//							JOptionPane.showInputDialog("Enter event: "))));
-//					break;
-//				case 3:
-//					System.out.println(updateCheckoutTime(
-//							Integer.parseInt(JOptionPane.showInputDialog("Enter ID of entry you want to update: "))));
-//					break;
-//				case 4:
-//					System.out.println(deleteAttendance(
-//							Integer.parseInt(JOptionPane.showInputDialog("Enter ID of entry you want to delete: "))));
-//					break;
-//				case 5:
-//					System.out.println("Bye bye");
-//					getConnection().close();
-//					break;
-//				}
-//			} while (input != 5);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		try {
-//			boolean done = false;
-//			state = getConnection().createStatement();
-//			done = state.execute("create database if not exists 7587attendance");
-//			state.execute("alter table `memberinfo` auto_increment = 1");
-//			int input = 0;
-//			Scanner scan = new Scanner(System.in);
-//			do {
-//				JOptionPane.showInputDialog(null,
-//						"1. Read database\n2. Insert attendance\n3. Update database\n4. Delete from database");
-//				input = scan.nextInt();
-//				switch (input) {
-//				case 1:
-//				}
-//			} while (input != 6);
-//
-//			System.out.println(done);
-//			System.out.println(insertIntoMemberInfo("Jason", "Programming", 0, state));
-//			System.out.println(updateMemberInfo("`subteam` = \"alumni\"", "`id` < 5", state));
-//			res = selectMemberInfo("*", state);
-//			System.out.println(getMemberInfo(res));
-//			System.out.println(state.executeUpdate("delete from `memberinfo` where `id` != 0"));
-//			res = selectMemberInfo("*", state);
-//			System.out.println(getMemberInfo(res));
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			res.close();
-//			state.close();
-//		}
 	}
 
-	private double convertToHours(int minutes) {
-		double hours = (minutes / 60) + (0.1 * ((minutes % 60) / 6));
-		String hourStr = String.format("%.2f", hours);
-		return Double.parseDouble(hourStr);
-	}
+
 
 	public Connection getConnection() {
 		Connection conn = null;
@@ -207,7 +144,7 @@ public class AttendanceDataAccess {
 						"select timestampdiff (minute, timeIn, timeOut) as totalTime from `attendance` where id = "
 								+ id);
 				timeSpent = rs2.next() ? rs2.getInt("totalTime") : -1;
-				pojo.setTimeSpent(convertToHours(timeSpent));
+				pojo.setTimeSpent(Util.convertToHours(timeSpent));
 				attendancePOJOs.add(pojo);
 			}
 			state.close();
@@ -361,7 +298,7 @@ public class AttendanceDataAccess {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
 				timeIn = rs.getTimestamp("timeIn").toLocalDateTime();
-				time = convertToHours(SQLtime);
+				time = Util.convertToHours(SQLtime);
 				pojo = new Attendance(null, name, timeIn, null, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
@@ -381,10 +318,6 @@ public class AttendanceDataAccess {
 		}
 		try {
 			state = getConnection().createStatement();
-			// Date now = new java.util.Date();
-			// DateFormat format = new SimpleDateFormat("DDD");
-			// String dayStr = format.format(now);
-			// int day = Integer.parseInt(dayStr);
 			Attendance att = null;
 			String sql = "select max(timeIn) as maxTimeIn from attendance where name = \"" + name + "\"";
 			rs = state.executeQuery(sql);

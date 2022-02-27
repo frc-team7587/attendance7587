@@ -1,5 +1,6 @@
 package org.memo.frc;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -10,10 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class AttendanceWebController {
@@ -34,32 +32,19 @@ public class AttendanceWebController {
 		return "currentlyCheckedIn";
 	}
 
-	@GetMapping({ "attendanceTimeFrame" })
-	public String attendanceTimeFrame(Model model) {
-		model.addAttribute("appName", appName);
-		model.addAttribute("dateHolder", new AttendanceTimeFrame());
-		return "attendanceTimeFrame";
+	@RequestMapping(method={RequestMethod.GET, RequestMethod.POST},value="report")
+	public String attendanceTimeFramePOST(@ModelAttribute ReportRequest request, Model model) {
+		if(request.isEmpty()){
+			model.addAttribute("appName", appName);
+			model.addAttribute("reportRequest", new ReportRequest(new Date(new java.util.Date().getTime()), new Date(new java.util.Date().getTime())));
+		}else{
+			model.addAttribute("appName", appName);
+			model.addAttribute("dateHolder", request);
+			List<Attendance> reportData = attendanceService.attendanceTimeFrame(request.getStart(), request.getEnd());
+			model.addAttribute("reportData", reportData);
+		}
+		return "attendanceReport";
 	}
-
-	@PostMapping({ "attendanceTimeFramePost" })
-	public String attendanceTimeFramePOST(@ModelAttribute AttendanceTimeFrame frame, Model model) {
-		model.addAttribute("appName", appName);
-		System.out.println("start: " + frame.getStart().toString() + "\nend: " + frame.getEnd().toString());
-		List<Attendance> attendanceTimeFrame = attendanceService.attendanceTimeFrame(frame.getStart(), frame.getEnd());
-		model.addAttribute("attendanceTimeFrame", attendanceTimeFrame);
-		return "attendanceTimeFramePost";
-	}
-
-//	@GetMapping({ "/allAttendance" })
-//	public String allAttendancePage(Model model) {
-//
-//		model.addAttribute("appName", appName);
-//
-//		List<Attendance> allAttendance = attendanceService.getAllAttendance();
-//		model.addAttribute("allAttendance", allAttendance);
-//
-//		return "allAttendance";
-//	}
 
 	@GetMapping({ "weeklyHours" })
 	public String weeklyHours(Model model) {
@@ -93,23 +78,6 @@ public class AttendanceWebController {
 				.body(buf.toString());
 	}
 
-	/*
-	 * @PostMapping({"weeklyHours"})
-	 * public String weeklyHours(@ModelAttribute Date date, Model model) {
-	 * List<Attendance> weeklyHours = date == null ? attendanceService.weeklyHours()
-	 * : attendanceService.weeklyHours(date);
-	 * double total = 0;
-	 * for (Attendance pojo : weeklyHours) {
-	 * total += pojo.getTimeSpent();
-	 * }
-	 * model.addAttribute("appName", appName);
-	 * model.addAttribute("weeklyHours", weeklyHours);
-	 * model.addAttribute("total", total);
-	 * 
-	 * return "weeklyHours";
-	 * }
-	 */
-
 	@GetMapping({ "attendanceByName/{name}" })
 	public String attendanceByName(@PathVariable("name") String name, Model model) {
 		List<Attendance> attendanceByName = attendanceService.getAttendanceByName(name);
@@ -126,22 +94,6 @@ public class AttendanceWebController {
 		model.addAttribute("isCheckIn", attendanceService.getIsCheckIn());
 		return "scanCheck";
 	}
-
-	/*
-	 * @InitBinder
-	 * public void binder(WebDataBinder binder) {
-	 * binder.registerCustomEditor(Timestamp.class, new PropertyEditorSupport() {
-	 * public void setAsText(String value) {
-	 * try {
-	 * Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(value);
-	 * setValue(new Timestamp(parsedDate.getTime()));
-	 * } catch (ParseException e) {
-	 * setValue(null);
-	 * }
-	 * }
-	 * });
-	 * }
-	 */
 
 	@PostMapping({ "/confirmCheck" })
 	public String confirmCheck(@ModelAttribute Attendance att, Model model) {

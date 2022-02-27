@@ -17,4 +17,10 @@ public class Util {
 	public static LocalDateTime ts2Dt(Timestamp t){
 		return t==null ? null : t.toLocalDateTime();
 	}
+
+	public static double convertToHours(int minutes) {
+		double hours = (minutes / 60) + (0.1 * ((minutes % 60) / 6));
+		String hourStr = String.format("%.2f", hours);
+		return Double.parseDouble(hourStr);
+	}
 }
