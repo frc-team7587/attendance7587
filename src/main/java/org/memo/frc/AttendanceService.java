@@ -36,18 +36,15 @@ public class AttendanceService {
 		return selectedAttendance;
 	}
 
-	public List<Attendance> weeklyHours() {
-		selectedAttendance = attDAO.weeklyHours();
+	public List<Attendance> getSummary() {
+		selectedAttendance = attDAO.getSummary();
 		return selectedAttendance;
 	}
 
-	public List<Attendance> weeklyHours(Date date) {
-		selectedAttendance = attDAO.weeklyHours(date);
+	public List<Attendance> getSummary(Date startDt, Date endDt) {
+		selectedAttendance = attDAO.getSummary(startDt, endDt);
 		return selectedAttendance;
 	}
-//	public AttendanceObject checkout(String name) {
-//		return attDAO.updateCheckoutTime(name);
-//	}
 
 	public Attendance scanCheck(String name) {
 		Attendance att = attDAO.scanCheck(name);

@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+
+<head th:insert="~{common :: pagehead('Attendance Report')}"></head>
+
+<body class="m-4">
+
+    <table th:replace="~{common :: toptable}"></table>
+
+    <!-- nav header start -->
+    <div th:replace="~{common :: navhead}"></div>
+    <!-- nav header end -->
+    <div>
+        <form method="post" action="#" th:action="@{/details}" th:object="${reportRequest}">
+            <table class="table table-sm w-75">
+                <tr>
+                    <th colspan="3">Attendance Details</th>
+                </tr>
+                <tr>
+                    <td>Start Date: <input type="date" th:field="*{start}"></td>
+                    <td>End Date: <input type="date" th:field="*{end}"></td>
+                    <td><input type=submit class="btn btn-primary btn-sm" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <table class="table table-hover table-bordered">
+        <thead class="bg-info">
+            <tr>
+                <th class="hiddenRow">ID</th>
+                <th>Name</th>
+                <th>Time In</th>
+                <th>Time Out</th>
+                <th>Event</th>
+                <th>Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="u : ${attendanceRecords}">
+                <td th:text="${u.name}">name</td>
+                <td th:text="${#temporals.format(u.timeIn, 'MM/dd/yyyy hh:mm a')}">timeIn</td>
+                <td th:text="${#temporals.format(u.timeOut, 'MM/dd/yyyy hh:mm a')}">timeOut</td>
+                <td th:text="${u.event}">event</td>
+                <td th:text="${u.timeSpent}">timeSpent</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>
