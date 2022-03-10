@@ -8,7 +8,9 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -265,41 +267,37 @@ public class AttendanceDataAccess {
 		}
 	}
 
-	public List<Attendance> weeklyHours() { // default to this week only
+	public List<Attendance> getSummary() { // default to this week only
 		Date now = new java.util.Date();
-		return weeklyHours(now, now);
+		return getSummary(now, now);
 	}
 
-	public List<Attendance> weeklyHours(Date date1) { // past week to this week
+	public List<Attendance> getSummary(Date date1) { // past week to this week
 		Date now = new java.util.Date();
-		return weeklyHours(date1, now);
+		return getSummary(date1, now);
 	}
 
-	public List<Attendance> weeklyHours(Date date1, Date date2) { // parameterize time ranges; give current week by //
+	public List<Attendance> getSummary(Date startDate, Date endDate) { // parameterize time ranges; give current week by //
 																	// default, else take user-given time range
 		try {
-			if (date2.getTime() < date1.getTime()) {
+			if (endDate.getTime() < startDate.getTime()) {
 				return null;
 			}
 			state = getConnection().createStatement();
 			String name;
-			LocalDateTime timeIn;
 			double time;
 			int SQLtime;
-			DateFormat format = new SimpleDateFormat("ww");
-			int week1 = Integer.parseInt(format.format(date1));
-			int week2 = Integer.parseInt(format.format(date2));
 			List<Attendance> weeklyHours = new ArrayList<>();
 			Attendance pojo;
-			String sql = "select name,timestampdiff(minute, timeIn, timeOut) as totalTime, timeIn from `attendance` where week(timeIn,0) <= "
-					+ (week2) + " and week(timeIn,0) >= " + (week1 - 1);
+			String sql = "select name, sum(timestampdiff(minute, timeIn, timeOut)) as totalTime from `attendance` where date(timeIn) <= '"
+					+ format.format(endDate) + "' and date(timeIn) >= '" + format.format(startDate) + "' group by name order by name";
 			rs = state.executeQuery(sql);
 			while (rs.next()) {
 				name = rs.getString("name");
 				SQLtime = rs.getInt("totalTime");
-				timeIn = rs.getTimestamp("timeIn").toLocalDateTime();
+				// timeIn = rs.getTimestamp("timeIn").toLocalDateTime();
 				time = Util.convertToHours(SQLtime);
-				pojo = new Attendance(null, name, timeIn, null, null);
+				pojo = new Attendance(name, null);
 				pojo.setTimeSpent(time);
 				weeklyHours.add(pojo);
 			}

@@ -10,16 +10,22 @@
     <div th:replace="~{common :: navhead}"></div>
     <!-- nav header end -->
 
-    <table class="table table-hover table-bordered">
+    <div class="mb-3">
+        <strong>Members currently checked in today:</strong>
+    </div>
+    <table class="table table-sm table-hover table-bordered w-70">
+        <thead class="bg-info">
         <tr>
-            <th>Members currently checked in today: </th>
+            <th>Name</th>
+            <th>Time In</th>
         </tr>
-        <tr>
-            <th>NAME</th>
-        </tr>
+        </thead>
+        <tbody>
         <tr th:each="u : ${currentlyCheckedIn}">
             <td th:text="${u.name}">name</td>
+            <td th:text="${#temporals.format(u.timeIn, 'MM/dd/yyyy hh:mm a')}">timeIn</td>
         </tr>
+        </tbody>
     </table>
 
 </body>

@@ -16,7 +16,7 @@ public class ReportRequest {
 	}
 
 	public ReportRequest(String start, String end) throws ParseException {
-		this(new Date(format.parse(start).getTime()), new Date(format.parse(end).getTime()));
+		this(Date.valueOf(start), Date.valueOf(end));
 	}
 
 	public ReportRequest() {
