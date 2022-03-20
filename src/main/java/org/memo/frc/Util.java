@@ -3,8 +3,15 @@ package org.memo.frc;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 public class Util {
+
+	public static final ZoneId TZ = ZoneId.of("America/New_York");
+
+	public static LocalDateTime now(){
+		return LocalDateTime.now(TZ);
+	}
 
 	public static String getDisplayTimeString(Timestamp time) {
 		return new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(time);

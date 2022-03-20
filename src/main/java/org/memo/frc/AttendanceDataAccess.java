@@ -321,14 +321,14 @@ public class AttendanceDataAccess {
 			rs = state.executeQuery(sql);
 			if (rs.next() && rs.getTimestamp("maxTimeIn") != null) { // has history
 				Timestamp time = rs.getTimestamp("maxTimeIn");
-				String sql2 = "select * from `attendance` where timeIn = '" + time + "' and dayofyear(timeIn) = " + LocalDateTime.now().getDayOfYear()
+				String sql2 = "select * from `attendance` where timeIn = '" + time + "' and dayofyear(timeIn) = " + Util.now().getDayOfYear()
 						+ " and name = \"" + name + "\"";
 				rs.close();
 				state = getConnection().createStatement();
 				rs = state.executeQuery(sql2);
 				att = constructSingleAttendanceObjectFromResultSet(rs);
 				if (att != null && att.getTimeOut() == null) { // checking out
-					att.setTimeOut(LocalDateTime.now());
+					att.setTimeOut(Util.now());
 					state.close();
 					rs.close();
 					return att;
@@ -336,7 +336,7 @@ public class AttendanceDataAccess {
 			}
 			// else, checking in
 
-			att = new Attendance(name, LocalDateTime.now());
+			att = new Attendance(name, Util.now());
 			state.close();
 			rs.close();
 			return att;
