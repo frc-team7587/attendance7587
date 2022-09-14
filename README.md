@@ -13,11 +13,15 @@ This is a cloud-based web application used to manage Team 7587's attendance.
 * Easy on-screen and downloadable reports
 
 ## Usage
-The application can accessed at below link:
+Access the application here:
 
 https://ec2-3-86-77-191.compute-1.amazonaws.com:8080/attendance7587/
 
-If not yet authenticated, you'll be prompted for your credential.
-
+* If not yet authenticated, you'll be prompted for your credential.
+* Generate QR codes for each team member at https://www.qrcode-monkey.com/, using a URL like following:
+```
+https://ec2-3-86-77-191.compute-1.amazonaws.com:8080/attendance7587/scanCheck/firstName%20lastName
+```
+* Scan the QR code with your phone, and the browser will open the attendance entry form and automatically record the current time
 
 
