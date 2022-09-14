@@ -22,6 +22,8 @@ https://ec2-3-86-77-191.compute-1.amazonaws.com:8080/attendance7587/
 ```
 https://ec2-3-86-77-191.compute-1.amazonaws.com:8080/attendance7587/scanCheck/firstName%20lastName
 ```
-* Scan the QR code with your phone, and the browser will open the attendance entry form and automatically record the current time
+* Scan the QR code with your phone, and the browser will open the attendance entry form and automatically record the current time, click 'Confirm?' to save it.
+
+![check-in form](doc/check-entry.png "Title")
 
 
